@@ -9,4 +9,8 @@
     <color name="white">#FFFFFFFF</color>
     <color name="title_log_page">#181823</color>
     <color name="facebook_button">#4267B2</color>
+    <color name="x_button">#1DA1F2</color>
+    <color name="google_button">#EA4335</color>
+    <color name="unfocIndicatorColor_log_page">#E7771B</color>
+    <color name="OR_page_LogIn">#8F959E</color>
 </resources>

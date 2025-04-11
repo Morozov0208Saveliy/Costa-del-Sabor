@@ -2,4 +2,17 @@
     <string name="app_name">Costa del Sabor</string>
     <string name="title_log_page">Let’s Get Started</string>
     <string name="facebook">Facebook</string>
+    <string name="twitter">Twitter</string>
+    <string name="google">Google</string>
+    <string name="create_an_account">Create an Account</string>
+    <string name="sing_up">Sing Up</string>
+    <string name="skip_login">Skip LogIn/</string>
+    <string name="sign_in">Sign in</string>
+    <string name="already_have_an_account">Already have an account?</string>
+    <string name="email_address">Email Address</string>
+    <string name="write_user_name">Write user name</string>
+    <string name="write_password">Write password</string>
+    <string name="remember_me">Remember me</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="by_connecting_your_account_confirm_that_you_agree_with_our">By connecting your account confirm that you agree\n with our Term and Condition</string>
 </resources>
