@@ -72,7 +72,7 @@ fun WelcomeScreen() {
         )
         withStyle(
             style = SpanStyle(
-                color = colorResource(id = R.color.unfocIndicatorColor_log_page),
+                color = colorResource(id = R.color.black),
             )
         ) {
             append("Term and Condition")
@@ -217,10 +217,12 @@ fun WelcomeScreen() {
 
             ClickableText(
                 text = annotatedText,
-                modifier = Modifier.padding(top = 26.dp),
+                modifier = Modifier
+                    .padding(top = 26.dp),
                 style = LocalTextStyle.current.copy(
                     fontSize = 15.sp,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    color = colorResource(id = R.color.OR_page_LogIn)
                 )
             ) { offset ->
                 annotatedText.getStringAnnotations(
