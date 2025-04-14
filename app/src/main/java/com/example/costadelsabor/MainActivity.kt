@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.costadelsabor.screens.DateAndLocationScreen
 import com.example.costadelsabor.screens.InitScreen
 import com.example.costadelsabor.ui.theme.CostaDelSaborTheme
 
@@ -18,7 +19,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            InitScreen()
+            DateAndLocationScreen()
         }
     }
 }

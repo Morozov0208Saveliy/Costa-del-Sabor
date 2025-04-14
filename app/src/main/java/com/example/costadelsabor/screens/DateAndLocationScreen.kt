@@ -1,22 +1,22 @@
 package com.example.costadelsabor.screens
 
-import androidx.compose.foundation.Image
+import android.app.TimePickerDialog
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -27,8 +27,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,7 +39,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -47,52 +49,68 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.costadelsabor.R
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
+import java.util.Locale
+
+data class Address(
+    val street: String,
+    val city: String,
+    val state: String,
+    val zipCode: String
+)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 fun DateAndLocationScreen() {
-    val modifier = Modifier
-    var datePickerState by remember { mutableStateOf(false) }
-    var userName by remember { mutableStateOf("Write user name") }
-    var userPassword by remember { mutableStateOf("Write password") }
-    var rememberMe by remember { mutableStateOf(false) }
-    Scaffold(topBar = {
-        TopAppBar(
-//            modifier = Modifier
-//                .padding(start = 45.dp
-//                ),
-            title = {
-                Text(
-                    text = "",
-                    style = MaterialTheme.typography.bodySmall
-                )
-            },
-            navigationIcon = {
-                IconButton(onClick = { /*TODO*/ }) {
-                    Icon(
-                        imageVector = Icons.Filled.ArrowBack,
-                        contentDescription = "Back"
-                    )
-                }
-            },
-        )
-    }
-    )
-    { innerPadding ->
+
+    var showDateDialog by remember { mutableStateOf(false) }
+    var selectedDate by remember { mutableStateOf<Long?>(null) }
+    val dateFormatter = remember { SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()) }
+    val dateText = selectedDate?.let { millis -> dateFormatter.format(Date(millis)) } ?: ""
+
+    var showTimePicker by remember { mutableStateOf(false) }
+    var selectedTime by remember { mutableStateOf<Calendar?>(null) }
+    val timeFormatter = remember { SimpleDateFormat("HH:mm", Locale.getDefault()) }
+    val timeText = selectedTime?.let { calendar -> timeFormatter.format(calendar.time) } ?: "13:00"
+
+    var showLocationDialog by remember { mutableStateOf(false) }
+    var selectedLocation by remember { mutableStateOf("") }
+    val adress = Address(street = "Street", city = "City", state = "State", zipCode = "ZipCode")
+
+//    var rememberMe by remember { mutableStateOf(false) }
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(text = "", style = MaterialTheme.typography.bodySmall) },
+                navigationIcon = {
+                    IconButton(onClick = { }) {
+                        Icon(
+                            imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = "Back"
+                        )
+                    }
+                },
+            )
+        }
+    ) { innerPadding ->
         Column(
-            modifier = modifier
+            modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize(),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+
             Text(
                 text = "Date and Location",
                 fontSize = 28.sp,
                 style = TextStyle(fontWeight = FontWeight.Bold),
             )
+
             Text(
                 text = "Please provide your event date,\npreferred time and location",
                 maxLines = 2,
@@ -103,84 +121,93 @@ fun DateAndLocationScreen() {
                 textAlign = TextAlign.Center,
                 color = colorResource(id = R.color.OR_page_LogIn)
             )
-            OutlinedTextField(value = datePickerState,
-                onValueChange = {newDateInput->
-                    newDateInput = datePickerState
-                },
 
+
+            DateTextField(
+                dateText = dateText,
+                onDateClick = { showDateDialog = true }
             )
-            OutlinedTextField(
-                value = userName,
-                onValueChange = { newNameInput ->
-                    userName = newNameInput
-                },
-                label = {
-                    Text(stringResource(R.string.write_user_name))
-                },
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = colorResource(id = R.color.teal_700),
-                    unfocusedBorderColor = colorResource(id = R.color.unfocIndicatorColor_log_page),
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 20.dp, start = 20.dp, end = 5.dp)
-            )
-            OutlinedTextField(
-                value = userPassword,
-                onValueChange = { newPasswordInput ->
-                    userPassword = newPasswordInput
-                },
-                label = {
-                    Text(stringResource(R.string.write_password))
-                },
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = colorResource(id = R.color.teal_700),
-                    unfocusedBorderColor = colorResource(id = R.color.unfocIndicatorColor_log_page),
-                ),
-                modifier = Modifier
-                    .padding(start = 20.dp, end = 5.dp, top = 20.dp)
-                    .fillMaxWidth()
-            )
-            Row(
-                modifier = Modifier
-                    .padding(start = 20.dp, end = 13.dp, top = 34.dp)
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceAround
-            ) {
-                Text(
-                    stringResource(R.string.remember_me),
-                    fontSize = 13.sp,
-                    color = colorResource(id = R.color.black),
-                    style = TextStyle(fontWeight = FontWeight.Medium)
+
+
+            if (showDateDialog) {
+                val datePickerState = rememberDatePickerState(
+                    initialSelectedDateMillis = selectedDate
                 )
-                Switch(
-                    checked = rememberMe,
-                    onCheckedChange = { newCheckedState ->
-                        rememberMe = newCheckedState
+                DatePickerDialog(
+                    onDismissRequest = { showDateDialog = false },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            selectedDate = datePickerState.selectedDateMillis
+                            showDateDialog = false
+                        }) { Text("OK") }
                     },
-                    colors = SwitchDefaults.colors(
-                        checkedThumbColor = colorResource(id = R.color.unfocIndicatorColor_log_page),
-                        uncheckedBorderColor = colorResource(id = R.color.unfocIndicatorColor_log_page),
-                        uncheckedThumbColor = colorResource(id = R.color.title_log_page),
-                        uncheckedTrackColor = colorResource(id = R.color.white),
-                    ),
-                    modifier = Modifier
-                        .padding(start = 206.dp)
-                        .size(30.dp),
-                )
-
-
+                    dismissButton = {
+                        TextButton(onClick = { showDateDialog = false }) { Text("Cancel") }
+                    }
+                ) {
+                    DatePicker(state = datePickerState)
+                }
             }
+
+            TimeTextField(
+                timeText = timeText,
+                onTimeClick = { showTimePicker = true }
+            )
+
+            if (showTimePicker) {
+                val initialHour = selectedTime?.get(Calendar.HOUR_OF_DAY) ?: 13
+                val initialMinute = selectedTime?.get(Calendar.MINUTE) ?: 0
+                val timePickerState = rememberTimePickerState(
+                    initialHour = initialHour,
+                    initialMinute = initialMinute,
+                    is24Hour = true
+                )
+            }
+            LocationTextField(
+                selectedLocation = selectedLocation,
+                onLocationClick = { showLocationDialog = true }
+            )
+            if(showLocationDialog){
+                val locations = listOf(adress)
+            }
+
+//            Row(
+//                modifier = Modifier
+//                    .padding(start = 20.dp, end = 13.dp, top = 34.dp)
+//                    .fillMaxWidth(),
+//                verticalAlignment = Alignment.CenterVertically,
+//                horizontalArrangement = Arrangement.SpaceAround
+//            ) {
+//                Text(
+//                    stringResource(R.string.remember_me),
+//                    fontSize = 13.sp,
+//                    color = colorResource(id = R.color.black),
+//                    style = TextStyle(fontWeight = FontWeight.Medium)
+//                )
+//                Switch(
+//                    checked = rememberMe,
+//                    onCheckedChange = { newCheckedState -> rememberMe = newCheckedState },
+//                    colors = SwitchDefaults.colors(
+//                        checkedThumbColor = colorResource(id = R.color.unfocIndicatorColor_log_page),
+//                        uncheckedBorderColor = colorResource(id = R.color.unfocIndicatorColor_log_page),
+//                        uncheckedThumbColor = colorResource(id = R.color.title_log_page),
+//                        uncheckedTrackColor = colorResource(id = R.color.white),
+//                    ),
+//                    modifier = Modifier
+//                        .padding(start = 206.dp)
+//                        .size(30.dp)
+//                )
+//            }
+//
             Button(
-                onClick = { /*TODO*/ },
+                onClick = { },
                 shape = RoundedCornerShape(10.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = colorResource(id = R.color.unfocIndicatorColor_log_page)
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 63.dp, end = 70.dp, top = 46.dp, bottom = 145.dp),
+                    .padding(start = 63.dp, end = 70.dp, top = 44.dp),
             ) {
                 Text(
                     text = stringResource(R.string.sing_up),
@@ -188,7 +215,95 @@ fun DateAndLocationScreen() {
                     style = MaterialTheme.typography.headlineMedium
                 )
             }
+            Text(text = "Skip",
+                fontSize = 15.sp,
+                color = colorResource(id = R.color.x_button),
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .padding(top = 27.dp, bottom = 130.dp)
+            )
         }
-
     }
+}
+
+@Composable
+fun DateTextField(
+    dateText: String,
+    onDateClick: () -> Unit
+) {
+    OutlinedTextField(
+        value = dateText,
+        onValueChange = {},
+        readOnly = true,
+        label = { Text("Date") },
+        trailingIcon = {
+            Icon(
+                imageVector = Icons.Default.DateRange,
+                contentDescription = "Open Date"
+            )
+        },
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedBorderColor = colorResource(id = R.color.teal_700),
+            unfocusedBorderColor = colorResource(id = R.color.unfocIndicatorColor_log_page)
+        ),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onDateClick() }
+            .padding(start = 19.dp, end = 4.dp, top = 47.dp)
+    )
+}
+
+@Composable
+fun TimeTextField(
+    timeText: String,
+    onTimeClick: () -> Unit
+) {
+    OutlinedTextField(
+        value = timeText,
+        onValueChange = {},
+        readOnly = true,
+        label = { Text("Time") },
+        trailingIcon = {
+            Icon(
+                painter = painterResource(id = R.drawable.time),
+                contentDescription = "Choose time"
+            )
+        },
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedBorderColor = colorResource(id = R.color.teal_700),
+            unfocusedBorderColor = colorResource(id = R.color.unfocIndicatorColor_log_page)
+        ),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onTimeClick() }
+            .padding(start = 19.dp, end = 4.dp, top = 17.dp)
+    )
+}
+
+@Composable
+fun LocationTextField(
+    selectedLocation: String,
+    onLocationClick: () -> Unit
+) {
+    OutlinedTextField(
+        value = selectedLocation,
+        onValueChange = {},
+        readOnly = true,
+        label = { Text("Location") },
+        trailingIcon = {
+            Icon(
+                painter = painterResource(id = R.drawable.location),
+                contentDescription = "Choose location"
+            )
+        },
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedBorderColor = colorResource(id = R.color.teal_700),
+            unfocusedBorderColor = colorResource(id = R.color.unfocIndicatorColor_log_page)
+        ),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { }
+            .padding(start = 19.dp, end = 4.dp, top = 18.dp)
+    )
+
 }
