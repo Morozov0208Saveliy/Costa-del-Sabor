@@ -14,5 +14,7 @@
     <string name="write_password">Write password</string>
     <string name="remember_me">Remember me</string>
     <string name="forgot_password">Forgot password?</string>
-    <string name="by_connecting_your_account_confirm_that_you_agree_with_our">By connecting your account confirm that you agree\n with our Term and Condition</string>
+    <string name="by_connecting_your_account_confirm_that_you_agree_with_our">
+        By connecting your account confirm that you agree\nwith our Term and Condition</string>
+
 </resources>
