@@ -49,9 +49,9 @@ import com.example.costadelsabor.R
 @Composable
 fun SingUpScreen() {
     val modifier = Modifier
-    var emailAddress by remember { mutableStateOf("Write mail address") }
-    var userName by remember { mutableStateOf("Write user name") }
-    var userPassword by remember { mutableStateOf("Write password") }
+    var emailAddress by remember { mutableStateOf("") }
+    var userName by remember { mutableStateOf("") }
+    var userPassword by remember { mutableStateOf("") }
     var rememberMe by remember { mutableStateOf(false) }
     Scaffold(topBar = {
         TopAppBar(
@@ -92,7 +92,7 @@ fun SingUpScreen() {
                 contentScale = ContentScale.Fit
             )
             Text(
-                text = "Sing Up",
+                text= "Sing Up",
                 fontSize = 28.sp,
                 style = TextStyle(fontWeight = FontWeight.Bold),
                 modifier = Modifier

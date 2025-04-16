@@ -60,11 +60,12 @@ import com.example.costadelsabor.R
 fun WelcomeScreen() {
 
     val modifier = Modifier
-    var emailAddress by remember { mutableStateOf("Write mail address") }
-    var userName by remember { mutableStateOf("Write user name") }
+    var emailAddress by remember { mutableStateOf("") }
+    var userName by remember { mutableStateOf("") }
     var rememberMe by remember { mutableStateOf(false) }
 
     val annotatedText = buildAnnotatedString {
+        //нашел решение на форуме,уточнить реализацию длинного текста с отдельными кликабельными
         append("By connecting your account confirm that you agree\nwith our ")
         pushStringAnnotation(
             tag = "TERMS_LINK",

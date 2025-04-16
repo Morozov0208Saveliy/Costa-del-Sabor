@@ -1,18 +1,17 @@
 package com.example.costadelsabor.screens
 
 import android.app.TimePickerDialog
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
@@ -24,14 +23,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDatePickerState
-import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -39,6 +34,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -65,6 +61,7 @@ data class Address(
 @Preview
 @Composable
 fun DateAndLocationScreen() {
+    val context = LocalContext.current
 
     var showDateDialog by remember { mutableStateOf(false) }
     var selectedDate by remember { mutableStateOf<Long?>(null) }
@@ -78,22 +75,31 @@ fun DateAndLocationScreen() {
 
     var showLocationDialog by remember { mutableStateOf(false) }
     var selectedLocation by remember { mutableStateOf("") }
-    val adress = Address(street = "Street", city = "City", state = "State", zipCode = "ZipCode")
+    val address = Address(street = "Street", city = "City", state = "State", zipCode = "ZipCode")
 
-//    var rememberMe by remember { mutableStateOf(false) }
+    //(можно расширить)
+    val locations = listOf(
+        "Main Office",
+        "Downtown",
+        "Suburban Branch",
+        "${address.street}, ${address.city}"
+    )
+
+    // Состояние для диалога выбора локации
+    var showAddressDialog by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text(text = "", style = MaterialTheme.typography.bodySmall) },
                 navigationIcon = {
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = { /* Действие при нажатии назад */ }) {
                         Icon(
-                            imageVector = Icons.Filled.ArrowBack,
+                            imageVector = androidx.compose.material.icons.Icons.Filled.ArrowBack,
                             contentDescription = "Back"
                         )
                     }
-                },
+                }
             )
         }
     ) { innerPadding ->
@@ -108,7 +114,7 @@ fun DateAndLocationScreen() {
             Text(
                 text = "Date and Location",
                 fontSize = 28.sp,
-                style = TextStyle(fontWeight = FontWeight.Bold),
+                style = TextStyle(fontWeight = FontWeight.Bold)
             )
 
             Text(
@@ -122,12 +128,13 @@ fun DateAndLocationScreen() {
                 color = colorResource(id = R.color.OR_page_LogIn)
             )
 
-
             DateTextField(
                 dateText = dateText,
-                onDateClick = { showDateDialog = true }
+                onDateClick = {
+                    showDateDialog = true
+                    Log.d("DateAndLocationScreen", "DateTextField clicked")
+                }
             )
-
 
             if (showDateDialog) {
                 val datePickerState = rememberDatePickerState(
@@ -157,48 +164,56 @@ fun DateAndLocationScreen() {
             if (showTimePicker) {
                 val initialHour = selectedTime?.get(Calendar.HOUR_OF_DAY) ?: 13
                 val initialMinute = selectedTime?.get(Calendar.MINUTE) ?: 0
-                val timePickerState = rememberTimePickerState(
-                    initialHour = initialHour,
-                    initialMinute = initialMinute,
-                    is24Hour = true
-                )
-            }
-            LocationTextField(
-                selectedLocation = selectedLocation,
-                onLocationClick = { showLocationDialog = true }
-            )
-            if(showLocationDialog){
-                val locations = listOf(adress)
+                TimePickerDialog(
+                    context,
+                    { _, hourOfDay, minute ->
+                        val cal = Calendar.getInstance().apply {
+                            set(Calendar.HOUR_OF_DAY, hourOfDay)
+                            set(Calendar.MINUTE, minute)
+                        }
+                        selectedTime = cal
+                    },
+                    initialHour,
+                    initialMinute,
+                    true
+                ).apply { show() }
+                showTimePicker = false
             }
 
-//            Row(
-//                modifier = Modifier
-//                    .padding(start = 20.dp, end = 13.dp, top = 34.dp)
-//                    .fillMaxWidth(),
-//                verticalAlignment = Alignment.CenterVertically,
-//                horizontalArrangement = Arrangement.SpaceAround
-//            ) {
-//                Text(
-//                    stringResource(R.string.remember_me),
-//                    fontSize = 13.sp,
-//                    color = colorResource(id = R.color.black),
-//                    style = TextStyle(fontWeight = FontWeight.Medium)
-//                )
-//                Switch(
-//                    checked = rememberMe,
-//                    onCheckedChange = { newCheckedState -> rememberMe = newCheckedState },
-//                    colors = SwitchDefaults.colors(
-//                        checkedThumbColor = colorResource(id = R.color.unfocIndicatorColor_log_page),
-//                        uncheckedBorderColor = colorResource(id = R.color.unfocIndicatorColor_log_page),
-//                        uncheckedThumbColor = colorResource(id = R.color.title_log_page),
-//                        uncheckedTrackColor = colorResource(id = R.color.white),
-//                    ),
-//                    modifier = Modifier
-//                        .padding(start = 206.dp)
-//                        .size(30.dp)
-//                )
-//            }
-//
+            LocationTextField(
+                selectedLocation = selectedLocation,
+                onLocationClick = { showAddressDialog = true }
+            )
+
+            if (showAddressDialog) {
+                AlertDialog(
+                    onDismissRequest = { showAddressDialog = false },
+                    title = { Text(text = "Select Location") },
+                    text = {
+                        Column {
+                            locations.forEach { location ->
+                                Text(
+                                    text = location,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clickable {
+                                            selectedLocation = location
+                                            showAddressDialog = false
+                                        }
+                                        .padding(8.dp)
+                                )
+                            }
+                        }
+                    },
+                    confirmButton = {},
+                    dismissButton = {
+                        TextButton(onClick = { showAddressDialog = false }) {
+                            Text("Cancel")
+                        }
+                    }
+                )
+            }
+
             Button(
                 onClick = { },
                 shape = RoundedCornerShape(10.dp),
@@ -207,7 +222,7 @@ fun DateAndLocationScreen() {
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 63.dp, end = 70.dp, top = 44.dp),
+                    .padding(start = 63.dp, end = 70.dp, top = 44.dp)
             ) {
                 Text(
                     text = stringResource(R.string.sing_up),
@@ -215,12 +230,15 @@ fun DateAndLocationScreen() {
                     style = MaterialTheme.typography.headlineMedium
                 )
             }
-            Text(text = "Skip",
+
+            Text(
+                text = "Skip",
                 fontSize = 15.sp,
                 color = colorResource(id = R.color.x_button),
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .padding(top = 27.dp, bottom = 130.dp)
+                    .clickable { }
             )
         }
     }
@@ -238,7 +256,7 @@ fun DateTextField(
         label = { Text("Date") },
         trailingIcon = {
             Icon(
-                imageVector = Icons.Default.DateRange,
+                imageVector = androidx.compose.material.icons.Icons.Default.DateRange,
                 contentDescription = "Open Date"
             )
         },
@@ -265,8 +283,8 @@ fun TimeTextField(
         label = { Text("Time") },
         trailingIcon = {
             Icon(
-                painter = painterResource(id = R.drawable.time),
-                contentDescription = "Choose time"
+                painter = painterResource(id = R.drawable.access_time_24),
+                contentDescription = "Time"
             )
         },
         colors = OutlinedTextFieldDefaults.colors(
@@ -302,8 +320,7 @@ fun LocationTextField(
         ),
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { }
+            .clickable { onLocationClick() }
             .padding(start = 19.dp, end = 4.dp, top = 18.dp)
     )
-
 }

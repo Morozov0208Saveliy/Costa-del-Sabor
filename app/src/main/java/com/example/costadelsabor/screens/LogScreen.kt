@@ -41,7 +41,7 @@ fun LogScreen() {
     val modifier = Modifier
     /* remeber позволяет сохранить состояние(Когда произойдут изменения в inputEmailAddress(ниже по коду)
        То вместо того чтобы перерисовывать все он перерисует только там где обращались к переменной)) */
-    var inputEmailAddress by remember { mutableStateOf("Write mail address") }
+    var inputEmailAddress by remember { mutableStateOf("") }
     //если захочу изменить знач. то меняю через *название переменной*.value = "new value"
 
     Scaffold { innerPadding ->
