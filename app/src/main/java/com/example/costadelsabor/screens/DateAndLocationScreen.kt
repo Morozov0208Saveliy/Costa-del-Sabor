@@ -164,7 +164,7 @@ fun DateAndLocationScreen() {
             if (showTimePicker) {
                 val initialHour = selectedTime?.get(Calendar.HOUR_OF_DAY) ?: 13
                 val initialMinute = selectedTime?.get(Calendar.MINUTE) ?: 0
-                TimePickerDialog(
+                TimePickerDialog(//цвет поменять
                     context,
                     { _, hourOfDay, minute ->
                         val cal = Calendar.getInstance().apply {
@@ -249,9 +249,10 @@ fun DateTextField(
     dateText: String,
     onDateClick: () -> Unit
 ) {
-    OutlinedTextField(
+    OutlinedTextField(//Должна быть колонна
         value = dateText,
         onValueChange = {},
+        enabled = false,
         readOnly = true,
         label = { Text("Date") },
         trailingIcon = {
@@ -266,19 +267,22 @@ fun DateTextField(
         ),
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onDateClick() }
+            .clickable { onDateClick()
+            Log.d("DateAndLocationScreen", "Click clicked")
+            }
             .padding(start = 19.dp, end = 4.dp, top = 47.dp)
     )
 }
 
 @Composable
-fun TimeTextField(
+fun TimeTextField(// поменять цвет пикера в диа
     timeText: String,
     onTimeClick: () -> Unit
 ) {
     OutlinedTextField(
         value = timeText,
         onValueChange = {},
+        enabled = false,
         readOnly = true,
         label = { Text("Time") },
         trailingIcon = {

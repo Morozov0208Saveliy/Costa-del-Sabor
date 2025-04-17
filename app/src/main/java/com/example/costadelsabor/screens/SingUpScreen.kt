@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -43,6 +44,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.costadelsabor.R
+import com.example.costadelsabor.ui.theme.UiInput
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
@@ -92,28 +94,21 @@ fun SingUpScreen() {
                 contentScale = ContentScale.Fit
             )
             Text(
-                text= "Sing Up",
+                text = "Sing Up",
                 fontSize = 28.sp,
                 style = TextStyle(fontWeight = FontWeight.Bold),
                 modifier = Modifier
                     .padding(top = 26.dp)
             )
-            OutlinedTextField(
+            Spacer(modifier = Modifier.height(16.dp))
+            UiInput(
                 value = emailAddress,
                 onValueChange = { newMailInput ->
                     emailAddress = newMailInput
                 },
-                label = {
-                    Text(stringResource(id = R.string.email_address))
-                },
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = colorResource(id = R.color.teal_700),
-                    unfocusedBorderColor = colorResource(id = R.color.unfocIndicatorColor_log_page),
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 76.dp, start = 20.dp, end = 5.dp)
+                title = stringResource(id = R.string.email_address)
             )
+            Spacer(modifier = Modifier.height(5.dp))  //ПОСМОТРИ И ТАК ИЗМЕНИ
             OutlinedTextField(
                 value = userName,
                 onValueChange = { newNameInput ->

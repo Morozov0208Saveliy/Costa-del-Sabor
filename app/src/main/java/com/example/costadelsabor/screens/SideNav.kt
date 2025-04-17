@@ -58,6 +58,7 @@ fun SideNav() {
         drawerState = drawerState,
         drawerContent = {
             ModalDrawerSheet {
+                //Сюда добавить фото пользователя
                 //как алтернатива я могу просто здесь захаркодить фото пользователя и т.д
                 items.forEach { item ->
                     NavigationDrawerItem(
@@ -99,7 +100,6 @@ fun SideNav() {
                 )
             }
             ) {
-
             }
         }
     )
