@@ -164,7 +164,7 @@ fun DateAndLocationScreen() {
             if (showTimePicker) {
                 val initialHour = selectedTime?.get(Calendar.HOUR_OF_DAY) ?: 13
                 val initialMinute = selectedTime?.get(Calendar.MINUTE) ?: 0
-                TimePickerDialog(//цвет поменять
+                TimePickerDialog( //цвет поменять
                     context,
                     { _, hourOfDay, minute ->
                         val cal = Calendar.getInstance().apply {

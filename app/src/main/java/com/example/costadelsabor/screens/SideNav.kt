@@ -35,12 +35,9 @@ import kotlinx.coroutines.launch
 @Composable
 fun SideNav() {
 
+
+
     val items = listOf(
-//        SideNavItem(
-//            image = painterResource(id = R.drawable.logo),
-//            user = "User",
-//            userId = 123
-//        ),
         SideNavItem(title = "Services"),
         SideNavItem(title = "Packages"),
         SideNavItem(title = "Categories"),
