@@ -2,8 +2,10 @@ package com.example.costadelsabor.screens
 
 import android.app.TimePickerDialog
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -21,7 +22,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,24 +29,28 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.costadelsabor.R
+import com.example.costadelsabor.ui.UiButton
 import com.example.costadelsabor.ui.UiDateTextField
 import com.example.costadelsabor.ui.UiLocationTextField
 import com.example.costadelsabor.ui.UiTimeTextField
-import com.example.costadelsabor.ui.UiButton
+import com.kizitonwose.calendar.compose.HorizontalCalendar
+import com.kizitonwose.calendar.compose.rememberCalendarState
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.YearMonth
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
-import java.util.Date
 import java.util.Locale
 
 data class Address(
@@ -62,9 +66,11 @@ fun DateAndLocationScreen() {
     val context = LocalContext.current
 
     var showDateDialog by remember { mutableStateOf(false) }
-    var selectedDate by remember { mutableStateOf<Long?>(null) }
-    val dateFormatter = remember { SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()) }
-    val dateText = selectedDate?.let { millis -> dateFormatter.format(Date(millis)) } ?: ""
+    var selectedLocalDate by remember { mutableStateOf<LocalDate?>(null) }
+    val dateFormatter = remember {
+        DateTimeFormatter.ofPattern("dd/MM/yyyy", Locale.getDefault())
+    }
+    val dateText = selectedLocalDate?.let { dateFormatter.format(it) } ?: ""
 
     var showTimePicker by remember { mutableStateOf(false) }
     var selectedTime by remember { mutableStateOf<Calendar?>(null) }
@@ -82,7 +88,6 @@ fun DateAndLocationScreen() {
         "${address.street}, ${address.city}"
     )
 
-    // Состояние для диалога выбора локации
     var showAddressDialog by remember { mutableStateOf(false) }
 
     Scaffold(
@@ -107,11 +112,10 @@ fun DateAndLocationScreen() {
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
             Text(
                 text = "Date and Location",
                 fontSize = 28.sp,
-                style = TextStyle(fontWeight = FontWeight.Bold)
+                style = androidx.compose.ui.text.TextStyle(fontWeight = FontWeight.Bold)
             )
 
             Text(
@@ -136,14 +140,20 @@ fun DateAndLocationScreen() {
             )
 
             if (showDateDialog) {
-                val datePickerState = rememberDatePickerState(
-                    initialSelectedDateMillis = selectedDate
+                val currentDate = LocalDate.now()
+                val startMonth = YearMonth.from(currentDate.minusYears(1))
+                val endMonth = YearMonth.from(currentDate.plusYears(1))
+
+                val calendarState = rememberCalendarState(
+                    startMonth = startMonth,
+                    endMonth = endMonth,
+                    firstVisibleMonth = YearMonth.from(currentDate),
                 )
+
                 DatePickerDialog(
                     onDismissRequest = { showDateDialog = false },
                     confirmButton = {
                         TextButton(onClick = {
-                            selectedDate = datePickerState.selectedDateMillis
                             showDateDialog = false
                         }) { Text("OK") }
                     },
@@ -151,9 +161,46 @@ fun DateAndLocationScreen() {
                         TextButton(onClick = { showDateDialog = false }) { Text("Cancel") }
                     }
                 ) {
-                    DatePicker(state = datePickerState)
+                    HorizontalCalendar(
+                        state = calendarState,
+                        monthHeader = { month ->
+                            val formatter =
+                                DateTimeFormatter.ofPattern("MMMM yyyy", Locale.getDefault())
+                            Text(
+                                text = month.yearMonth.format(formatter),
+                                modifier = Modifier
+                                    .padding(8.dp)
+                                    .fillMaxWidth(),
+                                textAlign = TextAlign.Center,
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                        },
+                        dayContent = { day ->
+                            val isInRange = !day.date.isAfter(endMonth.atEndOfMonth())
+                            Box(
+                                modifier = Modifier
+                                    .clickable(enabled = isInRange) {
+                                        if (isInRange) selectedLocalDate = day.date
+                                    }
+                                    .background(
+                                        color = if (day.date == selectedLocalDate) MaterialTheme.colorScheme.primary.copy(
+                                            alpha = 0.3f
+                                        ) else Color.Transparent
+                                    )
+                                    .padding(8.dp)
+                            ) {
+                                Text(
+                                    text = day.date.dayOfMonth.toString(),
+                                    modifier = Modifier.align(Alignment.Center),
+                                    color = if (day.date == selectedLocalDate) Color.White
+                                    else MaterialTheme.colorScheme.onBackground
+                                )
+                            }
+                        }
+                    )
                 }
             }
+
             Spacer(modifier = Modifier.padding(17.dp))
 
             UiTimeTextField(
@@ -172,11 +219,12 @@ fun DateAndLocationScreen() {
                             set(Calendar.MINUTE, minute)
                         }
                         selectedTime = cal
+                        showTimePicker = false
                     },
                     initialHour,
                     initialMinute,
                     true
-                ).apply { show() }
+                ).show()
                 showTimePicker = false
             }
 
@@ -229,8 +277,7 @@ fun DateAndLocationScreen() {
                 fontSize = 15.sp,
                 color = colorResource(id = R.color.x_button),
                 textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .clickable { }
+                modifier = Modifier.clickable { }
             )
             Spacer(modifier = Modifier.padding(130.dp))
         }
