@@ -43,15 +43,19 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.costadelsabor.R
 import com.example.costadelsabor.ui.UiButton
 import com.example.costadelsabor.ui.UiInput
 import com.example.costadelsabor.ui.UiSwitcher
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview
 @Composable
-fun WelcomeScreen() {
+fun WelcomeScreen(
+    navigationToStart: () -> Unit,
+    navigationToMain: () -> Unit,
+    ) {
 
     val modifier = Modifier
     var emailAddress by remember { mutableStateOf("") }
@@ -83,7 +87,7 @@ fun WelcomeScreen() {
                 )
             },
             navigationIcon = {
-                IconButton(onClick = { /*TODO*/ }) {
+                IconButton(onClick = { navigationToStart() }) {
                     Icon(
                         imageVector = Icons.Filled.ArrowBack,
                         contentDescription = "Back"
@@ -188,10 +192,16 @@ fun WelcomeScreen() {
             }
             Spacer(modifier = Modifier.height(44.dp))
             UiButton(
-                onCLick = { /*TODO*/ },
+                onCLick = { navigationToMain() },
                 color = R.color.unfocIndicatorColor_log_page,
                 title = stringResource(R.string.sing_up)
             )
         }
     }
+}
+
+@Preview
+@Composable
+private fun WelcomeScreenPreview() {
+    WelcomeScreen({}, {})
 }

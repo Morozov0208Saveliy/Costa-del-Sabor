@@ -25,13 +25,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.compose.rememberNavController
 import com.example.costadelsabor.R
 import com.example.costadelsabor.ui.UiButton
 import com.example.costadelsabor.ui.UiButtonImage
 import com.example.costadelsabor.ui.UiInput
 
 @Composable
-fun LogScreen() {
+fun StartScreen(
+    navigateToRegister: () -> Unit,
+    navigateToMain: () -> Unit,
+    navigaionToWelcome: () -> Unit
+) {
     val modifier = Modifier
     /* remeber позволяет сохранить состояние(Когда произойдут изменения в inputEmailAddress(ниже по коду)
        То вместо того чтобы перерисовывать все он перерисует только там где обращались к переменной)) */
@@ -108,13 +113,13 @@ fun LogScreen() {
                     color = colorResource(id = R.color.black),
                     modifier = Modifier
                         .padding(start = 5.dp)
-                        .clickable {}
+                        .clickable { navigaionToWelcome() }
                 )
 
             }
             Spacer(modifier = Modifier.height(25.dp))
             UiButton(
-                onCLick = { /*TODO*/ },
+                onCLick = { navigateToRegister() },
                 color = R.color.unfocIndicatorColor_log_page,
                 title = stringResource(R.string.create_an_account)
             )
@@ -127,14 +132,14 @@ fun LogScreen() {
                     color = colorResource(id = R.color.x_button),
                     modifier = Modifier
                         .padding(start = 121.dp)
-                        .clickable {}
+                        .clickable { navigateToMain() }
                 )
                 Text(text = stringResource(R.string.sing_up),
                     fontSize = 15.sp,
                     color = colorResource(id = R.color.x_button),
                     modifier = Modifier
                         .padding(end = 108.dp)
-                        .clickable {}
+                        .clickable { navigateToRegister() }
                 )
             }
         }
@@ -144,5 +149,5 @@ fun LogScreen() {
 @Preview
 @Composable
 private fun LogScreenPreview() {
-    LogScreen()
+    StartScreen({}, {}, {})
 }

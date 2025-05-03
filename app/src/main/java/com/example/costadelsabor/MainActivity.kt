@@ -3,25 +3,49 @@ package com.example.costadelsabor
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.costadelsabor.screens.DateAndLocationScreen
-import com.example.costadelsabor.screens.InitScreen
-import com.example.costadelsabor.screens.SideNav
-import com.example.costadelsabor.screens.SingUpScreen
-import com.example.costadelsabor.ui.theme.CostaDelSaborTheme
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.costadelsabor.screens.StartScreen
+import com.example.costadelsabor.screens.MainScreen
+import com.example.costadelsabor.screens.RegisterScreen
+import com.example.costadelsabor.screens.ScreenRoutes
+import com.example.costadelsabor.screens.WelcomeScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            SingUpScreen()
+            val navController = rememberNavController()
+            NavHost(
+                navController = navController,
+                startDestination = ScreenRoutes.StartScree.route
+            ) {
+
+                composable(ScreenRoutes.StartScree.route) {
+                    StartScreen(
+                        navigateToRegister = { navController.navigate(ScreenRoutes.RegisterScreen.route) },
+                        navigateToMain = { navController.navigate(ScreenRoutes.MainScreen.route) },
+                        navigaionToWelcome = { navController.navigate(ScreenRoutes.WelcomeScreen.route) }
+                    )
+                }
+                composable(ScreenRoutes.RegisterScreen.route) {
+                    RegisterScreen(
+                        navigationToStart = { navController.navigate(ScreenRoutes.StartScree.route) },
+                        navigationToMain = { navController.navigate(ScreenRoutes.MainScreen.route) }
+                    )
+                }
+                composable(ScreenRoutes.WelcomeScreen.route) {
+                    WelcomeScreen(
+                        navigationToStart = { navController.navigate(ScreenRoutes.StartScree.route) },
+                        navigationToMain = { navController.navigate(ScreenRoutes.MainScreen.route) }
+                    )
+                }
+                composable("MainScreen") {
+                    MainScreen(navController)
+                }
+            }
+
         }
     }
 }

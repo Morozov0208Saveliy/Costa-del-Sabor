@@ -5,23 +5,18 @@ import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -45,6 +40,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.costadelsabor.R
+import com.example.costadelsabor.ui.UiDateTextField
+import com.example.costadelsabor.ui.UiLocationTextField
+import com.example.costadelsabor.ui.UiTimeTextField
+import com.example.costadelsabor.ui.UiButton
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -58,7 +57,6 @@ data class Address(
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview
 @Composable
 fun DateAndLocationScreen() {
     val context = LocalContext.current
@@ -71,13 +69,12 @@ fun DateAndLocationScreen() {
     var showTimePicker by remember { mutableStateOf(false) }
     var selectedTime by remember { mutableStateOf<Calendar?>(null) }
     val timeFormatter = remember { SimpleDateFormat("HH:mm", Locale.getDefault()) }
-    val timeText = selectedTime?.let { calendar -> timeFormatter.format(calendar.time) } ?: "13:00"
+    val timeText = selectedTime?.let { calendar -> timeFormatter.format(calendar.time) } ?: ""
 
     var showLocationDialog by remember { mutableStateOf(false) }
     var selectedLocation by remember { mutableStateOf("") }
     val address = Address(street = "Street", city = "City", state = "State", zipCode = "ZipCode")
 
-    //(можно расширить)
     val locations = listOf(
         "Main Office",
         "Downtown",
@@ -128,7 +125,9 @@ fun DateAndLocationScreen() {
                 color = colorResource(id = R.color.OR_page_LogIn)
             )
 
-            DateTextField(
+            Spacer(modifier = Modifier.padding(top = 47.dp))
+
+            UiDateTextField(
                 dateText = dateText,
                 onDateClick = {
                     showDateDialog = true
@@ -155,8 +154,9 @@ fun DateAndLocationScreen() {
                     DatePicker(state = datePickerState)
                 }
             }
+            Spacer(modifier = Modifier.padding(17.dp))
 
-            TimeTextField(
+            UiTimeTextField(
                 timeText = timeText,
                 onTimeClick = { showTimePicker = true }
             )
@@ -164,7 +164,7 @@ fun DateAndLocationScreen() {
             if (showTimePicker) {
                 val initialHour = selectedTime?.get(Calendar.HOUR_OF_DAY) ?: 13
                 val initialMinute = selectedTime?.get(Calendar.MINUTE) ?: 0
-                TimePickerDialog( //цвет поменять
+                TimePickerDialog(
                     context,
                     { _, hourOfDay, minute ->
                         val cal = Calendar.getInstance().apply {
@@ -180,7 +180,9 @@ fun DateAndLocationScreen() {
                 showTimePicker = false
             }
 
-            LocationTextField(
+            Spacer(modifier = Modifier.padding(17.dp))
+
+            UiLocationTextField(
                 selectedLocation = selectedLocation,
                 onLocationClick = { showAddressDialog = true }
             )
@@ -214,117 +216,29 @@ fun DateAndLocationScreen() {
                 )
             }
 
-            Button(
-                onClick = { },
-                shape = RoundedCornerShape(10.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = colorResource(id = R.color.unfocIndicatorColor_log_page)
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 63.dp, end = 70.dp, top = 44.dp)
-            ) {
-                Text(
-                    text = stringResource(R.string.sing_up),
-                    fontSize = 17.sp,
-                    style = MaterialTheme.typography.headlineMedium
-                )
-            }
+            Spacer(modifier = Modifier.padding(44.dp))
 
+            UiButton(
+                onCLick = { /*TODO*/ },
+                color = R.color.unfocIndicatorColor_log_page,
+                title = stringResource(R.string.confirm)
+            )
+            Spacer(modifier = Modifier.padding(27.dp))
             Text(
                 text = "Skip",
                 fontSize = 15.sp,
                 color = colorResource(id = R.color.x_button),
                 textAlign = TextAlign.Center,
                 modifier = Modifier
-                    .padding(top = 27.dp, bottom = 130.dp)
                     .clickable { }
             )
+            Spacer(modifier = Modifier.padding(130.dp))
         }
     }
 }
 
+@Preview
 @Composable
-fun DateTextField(
-    dateText: String,
-    onDateClick: () -> Unit
-) {
-    OutlinedTextField(//Должна быть колонна
-        value = dateText,
-        onValueChange = {},
-        enabled = false,
-        readOnly = true,
-        label = { Text("Date") },
-        trailingIcon = {
-            Icon(
-                imageVector = androidx.compose.material.icons.Icons.Default.DateRange,
-                contentDescription = "Open Date"
-            )
-        },
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = colorResource(id = R.color.teal_700),
-            unfocusedBorderColor = colorResource(id = R.color.unfocIndicatorColor_log_page)
-        ),
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onDateClick()
-            Log.d("DateAndLocationScreen", "Click clicked")
-            }
-            .padding(start = 19.dp, end = 4.dp, top = 47.dp)
-    )
-}
-
-@Composable
-fun TimeTextField(// поменять цвет пикера в диа
-    timeText: String,
-    onTimeClick: () -> Unit
-) {
-    OutlinedTextField(
-        value = timeText,
-        onValueChange = {},
-        enabled = false,
-        readOnly = true,
-        label = { Text("Time") },
-        trailingIcon = {
-            Icon(
-                painter = painterResource(id = R.drawable.access_time_24),
-                contentDescription = "Time"
-            )
-        },
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = colorResource(id = R.color.teal_700),
-            unfocusedBorderColor = colorResource(id = R.color.unfocIndicatorColor_log_page)
-        ),
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onTimeClick() }
-            .padding(start = 19.dp, end = 4.dp, top = 17.dp)
-    )
-}
-
-@Composable
-fun LocationTextField(
-    selectedLocation: String,
-    onLocationClick: () -> Unit
-) {
-    OutlinedTextField(
-        value = selectedLocation,
-        onValueChange = {},
-        readOnly = true,
-        label = { Text("Location") },
-        trailingIcon = {
-            Icon(
-                painter = painterResource(id = R.drawable.location),
-                contentDescription = "Choose location"
-            )
-        },
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = colorResource(id = R.color.teal_700),
-            unfocusedBorderColor = colorResource(id = R.color.unfocIndicatorColor_log_page)
-        ),
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onLocationClick() }
-            .padding(start = 19.dp, end = 4.dp, top = 18.dp)
-    )
+private fun DateAndLocationScreenPreview() {
+    DateAndLocationScreen()
 }

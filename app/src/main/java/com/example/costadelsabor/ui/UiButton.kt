@@ -24,7 +24,7 @@ fun UiButton(
     modifier: Modifier = Modifier
 ) {
     Button(
-        onClick = { /*TODO*/ },
+        onClick = { onCLick() },
         shape = RoundedCornerShape(10.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = colorResource(id = color)

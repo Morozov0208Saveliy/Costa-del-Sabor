@@ -32,6 +32,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.costadelsabor.R
 import com.example.costadelsabor.ui.UiButton
 import com.example.costadelsabor.ui.UiInput
@@ -40,7 +42,10 @@ import com.example.costadelsabor.ui.UiSwitcher
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SingUpScreen() {
+fun RegisterScreen(
+    navigationToStart: () -> Unit,
+    navigationToMain: () -> Unit,
+) {
     var rememberMe by remember { mutableStateOf(false) }
     var emailAddress by remember { mutableStateOf("") }
     var userName by remember { mutableStateOf("") }
@@ -56,7 +61,7 @@ fun SingUpScreen() {
                 )
             },
             navigationIcon = {
-                IconButton(onClick = { /*TODO*/ }) {
+                IconButton(onClick = { navigationToStart() }) {
                     Icon(
                         imageVector = Icons.Filled.ArrowBack,
                         contentDescription = "Back"
@@ -125,7 +130,7 @@ fun SingUpScreen() {
             Spacer(modifier = Modifier.height(46.dp))
             UiButton(
                 title = stringResource(id = R.string.sing_up),
-                onCLick = {},
+                onCLick = { navigationToMain() },
                 color = R.color.unfocIndicatorColor_log_page
             )
             Spacer(modifier = Modifier.height(145.dp))
@@ -138,5 +143,5 @@ fun SingUpScreen() {
 @Preview
 @Composable
 private fun SingUpScreenPreview() {
-    SingUpScreen()
+    RegisterScreen({}, {})
 }
