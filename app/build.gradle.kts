@@ -70,4 +70,7 @@ dependencies {
 
     implementation(libs.android.custom.calendar)
     implementation(libs.androidx.navigation.compose.v277)
+
+    implementation (libs.retrofit)
+    implementation (libs.converter.gson)
 }
